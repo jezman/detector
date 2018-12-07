@@ -10,7 +10,7 @@ WIZnetInterface ethernet(&spi, PB_6, PA_9);
 WIZnetInterface ethernet(&spi, PB_6, PA_9);
 #endif
 
-void initEthernet(void)
+void ethernetUp(void)
 {
 #if DHCP
     int ret = ethernet.init(MAC_Addr);
@@ -42,6 +42,10 @@ void initEthernet(void)
         printf("Error ethernet.init() - ret = %d\r\n", ret);
         exit(0);
     }
+}
+
+void ethernetDown(void){
+    ethernet.disconnect();
 }
 
 void sendRequest(void)
