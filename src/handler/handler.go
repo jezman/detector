@@ -8,7 +8,11 @@ import (
 	"time"
 )
 
-var alertCount uint8
+var (
+	alertCount uint8
+	file       *os.File
+	err        error
+)
 
 func logPrint(r *http.Request) {
 	log.Println(r.RemoteAddr)
@@ -58,6 +62,14 @@ func alertDetector(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	file, err = os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	defer file.Close()
+
+	log.SetOutput(file)
+	log.Println("handler starting...")
 	http.HandleFunc(os.Getenv("ALERT_URL"), alertDetector)
 	http.ListenAndServe(":8000", nil)
 }
