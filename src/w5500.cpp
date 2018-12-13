@@ -10,6 +10,11 @@ WIZnetInterface ethernet(&spi, PB_6, PA_9);
 WIZnetInterface ethernet(&spi, PB_6, PA_9);
 #endif
 
+const char *IP_Addr = "192.168.1.2";
+const char *IP_Subnet = "255.255.255.0";
+const char *IP_Gateway = "192.168.1.1";
+unsigned char MAC_Addr[6] = {0x00, 0x08, 0xDC, 0x12, 0x34, 0x56};
+
 void ethernetUp(void)
 {
 #if DHCP
@@ -55,11 +60,18 @@ void sendRequest(void)
 
     char sbuffer[] = "GET /anything?a=b HTTP/1.1\r\nHost: www.httpbin.org\r\n\r\n";
     int scount = socket.send(sbuffer, sizeof sbuffer);
-    printf("sent %d [%.*s]\n", scount, strstr(sbuffer, "\r\n") - sbuffer, sbuffer);
+    printf("sent %d [%.*s]\r\n", scount, strstr(sbuffer, "\r\n") - sbuffer, sbuffer);
 
     char rbuffer[64];
     int rcount = socket.receive(rbuffer, sizeof rbuffer);
     printf("recv %d [%.*s]\r\n", rcount, strstr(rbuffer, "\r\n") - rbuffer, rbuffer);
 
     socket.close();
+}
+
+void sendAlert(void)
+{
+    ethernetUp();
+    sendRequest();
+    ethernetDown();
 }
