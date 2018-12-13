@@ -37,10 +37,20 @@ func alertDetector(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
+		detectors, ok := r.URL.Query()["detector"]
+
+		if !ok || len(detectors[0]) < 1 {
+			log.Println("Url Param 'detector' is missing")
+		} else {
+			log.Println("detector - " + string(detectors[0]))
+		}
+
 		if alertCount == 1 {
 			go timer()
-			io.WriteString(w, `{"triggerStatus": "wait confirmation"}`)
+			io.WriteString(w, `{"triggerStatus": "waiting for confirmation"}`)
+			log.Println("alert detected, waiting for confirmation")
 		} else if alertCount > 1 {
+			log.Println("alert confirmed")
 			io.WriteString(w, `{"triggerStatus": "run"}`)
 			alertCount = 0
 		}
