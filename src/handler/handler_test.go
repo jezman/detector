@@ -12,12 +12,11 @@ func TestAlertDetector(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	req.Header.Set("Authorization", os.Getenv("ALERT_KEY"))
 
 	// first request
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(alertDetector)
+	handler := http.HandlerFunc(alertsHandler)
 
 	handler.ServeHTTP(rr, req)
 
@@ -34,7 +33,7 @@ func TestAlertDetector(t *testing.T) {
 
 	// second confirmation request
 	rr = httptest.NewRecorder()
-	handler = http.HandlerFunc(alertDetector)
+	handler = http.HandlerFunc(alertsHandler)
 
 	handler.ServeHTTP(rr, req)
 
